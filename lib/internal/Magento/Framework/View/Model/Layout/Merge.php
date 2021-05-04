@@ -970,7 +970,7 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
         if ($this->theme &&
             $this->theme->getId() !== $this->themeResolver->get()->getId()
         ) {
-            return $this->themeResolver->get();
+            $this->theme = $this->themeResolver->get();
         }
 
         return $this->theme;
