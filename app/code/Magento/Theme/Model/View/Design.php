@@ -102,18 +102,6 @@ class Design implements \Magento\Framework\View\DesignInterface
     }
 
     /**
-     * Set design area
-     *
-     * @param string $area
-     * @return $this
-     */
-    public function setArea($area)
-    {
-        $this->_area = $area;
-        return $this;
-    }
-
-    /**
      * Retrieve package area
      *
      * @return string
@@ -137,8 +125,8 @@ class Design implements \Magento\Framework\View\DesignInterface
     public function setDesignTheme($theme, $area = null)
     {
         if ($area) {
-            $this->setArea($area);
-        } elseif (null == $area) {
+            $this->_area = $area;
+        } else {
             $area = $this->getArea();
         }
 
