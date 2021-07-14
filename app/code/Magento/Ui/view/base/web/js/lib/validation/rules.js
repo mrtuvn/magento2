@@ -11,10 +11,9 @@ define([
     'underscore',
     './utils',
     'moment',
-    'tinycolor',
     'jquery/validate',
     'mage/translate'
-], function ($, _, utils, moment, tinycolor) {
+], function ($, _, utils, moment) {
     'use strict';
 
     /**
@@ -1082,7 +1081,9 @@ define([
                     return true;
                 }
 
-                return tinycolor(value).isValid();
+                require(['tinycolor'], function (tinycolor) {
+                    return tinycolor(value).isValid();
+                });
             },
             $.mage.__('Wrong color format. Please specify color in HEX, RGBa, HSVa, HSLa or use color name.')
         ],
