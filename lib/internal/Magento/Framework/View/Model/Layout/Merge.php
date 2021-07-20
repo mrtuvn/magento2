@@ -182,9 +182,9 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
     private $cacheLifetime;
 
     /**
-     * @var \Magento\Framework\View\Design\Theme\ResolverInterface
+     * @var \Magento\Framework\View\DesignInterface
      */
-    private $themeResolver;
+    private $design;
 
     /**
      * Init merge model
@@ -203,7 +203,6 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
      * @param LayoutCacheKeyInterface|null $layoutCacheKey
      * @param SerializerInterface|null $serializer
      * @param int|null $cacheLifetime
-     * @param \Magento\Framework\View\Design\Theme\ResolverInterface|null $themeResolver
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -220,10 +219,10 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
         $cacheSuffix = '',
         LayoutCacheKeyInterface $layoutCacheKey = null,
         SerializerInterface $serializer = null,
-        ?int $cacheLifetime = null,
-        ?\Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver = null
+        ?int $cacheLifetime = null
     ) {
-        $this->theme = $theme ?? $design->getDesignTheme();
+        $this->design = $design;
+        $this->theme = $theme ?: $design->getDesignTheme();
         $this->scope = $scopeResolver->getScope();
         $this->fileSource = $fileSource;
         $this->pageLayoutFileSource = $pageLayoutFileSource;
@@ -237,7 +236,6 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
             ?: \Magento\Framework\App\ObjectManager::getInstance()->get(LayoutCacheKeyInterface::class);
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(SerializerInterface::class);
         $this->cacheLifetime = $cacheLifetime ?? self::DEFAULT_CACHE_LIFETIME;
-        $this->themeResolver = $themeResolver ?? ObjectManager::getInstance()->get(\Magento\Framework\View\Design\Theme\ResolverInterface::class);
     }
 
     /**
@@ -487,7 +485,8 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
         }
 
         $this->addHandle($handles);
-
+        // Use Design to get theme, because theme is changed after constructor
+        $this->theme = $this->design->getDesignTheme();
         $cacheId = $this->getCacheId() . '_' . self::PAGE_LAYOUT_CACHE_SUFFIX;
         $result = $this->_loadCache($cacheId);
         if ($result !== false && $result !== null) {
@@ -967,12 +966,6 @@ class Merge implements \Magento\Framework\View\Layout\ProcessorInterface
      */
     public function getTheme()
     {
-        if ($this->theme &&
-            $this->theme->getId() !== $this->themeResolver->get()->getId()
-        ) {
-            $this->theme = $this->themeResolver->get();
-        }
-
         return $this->theme;
     }
 
