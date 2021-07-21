@@ -5,10 +5,11 @@
 define([
     'ko',
     'jquery',
+    'Magento_Ui/js/lib/view/utils/async',
     'uiRegistry',
     'underscore',
     '../template/renderer'
-], function (ko, $, registry, _, renderer) {
+], function (ko, $, async, registry, _, renderer) {
     'use strict';
 
     var sizeOptions = [
@@ -70,20 +71,18 @@ define([
             element.css('width', 'auto');
         }
 
-        require(['Magento_Ui/js/lib/view/utils/async'], function (async) {
-            _.each(sizeConstraints, function (selector, key) {
-                async.async({
-                    component: componentName,
-                    selector: selector
-                }, function (elem) {
-                    size = key.indexOf('Height') !== -1 ? $(elem).outerHeight(true) : $(elem).outerWidth(true);
+        _.each(sizeConstraints, function (selector, key) {
+            async.async({
+                component: componentName,
+                selector: selector
+            }, function (elem) {
+                size = key.indexOf('Height') !== -1 ? $(elem).outerHeight(true) : $(elem).outerWidth(true);
 
-                    if (element.data('resizable')) {
-                        element.resizable('option', key, size + 1);
-                    }
-                });
-            }, this);
-        });
+                if (element.data('resizable')) {
+                    element.resizable('option', key, size + 1);
+                }
+            });
+        }, this);
 
         adjustSize(element);
     }
