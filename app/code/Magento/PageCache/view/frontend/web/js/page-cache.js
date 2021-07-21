@@ -6,11 +6,10 @@
 define([
     'jquery',
     'domReady',
-    'consoleLogger',
     'Magento_PageCache/js/form-key-provider',
     'jquery-ui-modules/widget',
     'mage/cookies'
-], function ($, domReady, consoleLogger, formKeyInit) {
+], function ($, domReady, formKeyInit) {
     'use strict';
 
     /**
@@ -69,7 +68,9 @@ define([
                             el.contentDocument || (el.contentWindow ? el.contentWindow.document : []) :
                             $.merge([], el.childNodes);
                     } catch (e) {
-                        consoleLogger.error(e);
+                        require(['consoleLogger'], function (consoleLogger) {
+                            consoleLogger.error(e);
+                        });
 
                         return [];
                     }
